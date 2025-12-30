@@ -10,7 +10,7 @@ import {
  * Warehouse edit component
  */
 export const WarehouseEdit: React.FC = () => (
-  <Edit>
+  <Edit redirect="list">
     <SimpleForm>
       <TextInput source="name" label="Название склада" validate={[required()]} />
       <TextInput source="address" label="Адрес" validate={[required()]} />

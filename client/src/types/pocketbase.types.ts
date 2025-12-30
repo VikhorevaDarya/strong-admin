@@ -34,6 +34,7 @@ export interface WarehouseRecord extends BaseRecord {
   name: string;
   address: string;
   products_count: number;
+  products_name?: string; // Comma-separated list of product names
 }
 
 /**

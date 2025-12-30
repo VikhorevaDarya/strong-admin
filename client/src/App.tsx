@@ -9,7 +9,7 @@ import { ProductList, ProductCreate, ProductEdit } from './resources/products';
 import { WarehouseList, WarehouseCreate, WarehouseEdit } from './resources/warehouses';
 import { ErrorBoundary } from './components/common';
 import { Layout } from './layout';
-import { Login } from './pages';
+import { Login, Dashboard } from './pages';
 import { customTheme } from './theme';
 
 /**
@@ -23,6 +23,7 @@ const App: React.FC = () => {
         authProvider={authProvider}
         layout={Layout}
         loginPage={Login}
+        dashboard={Dashboard}
         theme={customTheme}
         title="Strong Admin"
       >

@@ -10,7 +10,7 @@ import {
  * Warehouse create component
  */
 export const WarehouseCreate: React.FC = () => (
-  <Create>
+  <Create redirect="list">
     <SimpleForm>
       <TextInput source="name" label="Название склада" validate={[required()]} />
       <TextInput source="address" label="Адрес" validate={[required()]} />

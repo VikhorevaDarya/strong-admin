@@ -33,7 +33,7 @@ const ProductFilter: React.FC<Omit<FilterProps, 'children'>> = (props) => (
       reference="warehouses"
       alwaysOn
     >
-      <SelectInput optionText="name" />
+      <SelectInput optionText="name" label="Склад" />
     </ReferenceInput>
   </Filter>
 );

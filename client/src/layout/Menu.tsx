@@ -17,12 +17,11 @@ export const Menu: React.FC = () => {
 
   return (
     <RaMenu>
-      {/* Дашборд (опционально) */}
+      {/* Дашборд */}
       <MenuItemLink
         to="/"
         primaryText="Дашборд"
         leftIcon={<DashboardIcon />}
-        sx={{ display: 'none' }} // Скрыто пока нет дашборда
       />
 
       {/* Товары */}

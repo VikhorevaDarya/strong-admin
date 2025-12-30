@@ -9,6 +9,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button as MuiButton,
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 import { pb } from '../../api/pocketbase.client';
+import { recalculateAllWarehousesCount } from '../../utils/warehouse.utils';
 
 interface ExcelImportButtonProps {
   resource?: string;
@@ -88,6 +89,9 @@ export const ExcelImportButton: React.FC<ExcelImportButtonProps> = ({ resource =
           console.error('Error importing row:', row, error);
         }
       }
+
+      // Пересчитываем количество товаров на всех складах
+      await recalculateAllWarehousesCount();
 
       // Показываем результат
       if (successCount > 0) {

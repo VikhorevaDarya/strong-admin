@@ -5,6 +5,7 @@
 
 import { pb } from '../pocketbase.client';
 import { EXPAND_CONFIG } from '../../config/pocketbase.config';
+import { updateWarehouseProductsCount, updateMultipleWarehousesCount } from '../../utils/warehouse.utils';
 import type {
   GetListParams,
   GetListResult,
@@ -143,6 +144,11 @@ export class DataService {
 
     console.log('✅ Created record:', record);
 
+    // Автоматически обновляем счетчик товаров на складе
+    if (resource === 'products' && record.warehouse) {
+      await updateWarehouseProductsCount(record.warehouse);
+    }
+
     return {
       data: { ...record, id: record.id } as T,
     };
@@ -152,9 +158,29 @@ export class DataService {
    * Update an existing record
    */
   public static async update<T>(resource: string, params: UpdateParams<T>): Promise<UpdateResult<T>> {
+    // Для products сохраняем старый warehouse перед обновлением
+    let oldWarehouse: string | undefined;
+    if (resource === 'products') {
+      const oldRecord = await pb.collection(resource).getOne(params.id.toString(), { fields: 'warehouse' });
+      oldWarehouse = oldRecord.warehouse;
+    }
+
     // Очищаем данные перед отправкой
     const cleanData = this.cleanDataForSubmit(resource, params.data);
     const record = await pb.collection(resource).update(params.id.toString(), cleanData);
+
+    // Автоматически обновляем счетчик товаров на складе
+    if (resource === 'products') {
+      const warehousesToUpdate = new Set<string>();
+
+      // Обновляем старый склад (если товар переместили)
+      if (oldWarehouse) warehousesToUpdate.add(oldWarehouse);
+
+      // Обновляем новый склад
+      if (record.warehouse) warehousesToUpdate.add(record.warehouse);
+
+      await updateMultipleWarehousesCount(Array.from(warehousesToUpdate));
+    }
 
     return {
       data: { ...record, id: record.id } as T,
@@ -180,7 +206,18 @@ export class DataService {
    * Delete a record
    */
   public static async delete<T>(resource: string, params: DeleteParams<T>): Promise<DeleteResult<T>> {
+    // Для products сохраняем warehouse перед удалением
+    let warehouseId: string | undefined;
+    if (resource === 'products' && params.previousData) {
+      warehouseId = (params.previousData as any).warehouse;
+    }
+
     await pb.collection(resource).delete(params.id.toString());
+
+    // Автоматически обновляем счетчик товаров на складе
+    if (resource === 'products' && warehouseId) {
+      await updateWarehouseProductsCount(warehouseId);
+    }
 
     return {
       data: params.previousData as T,
@@ -191,7 +228,22 @@ export class DataService {
    * Delete multiple records
    */
   public static async deleteMany(resource: string, params: DeleteManyParams): Promise<DeleteManyResult> {
+    // Для products сохраняем warehouses перед удалением
+    const warehouseIds: string[] = [];
+    if (resource === 'products') {
+      const records = await pb.collection(resource).getFullList({
+        filter: params.ids.map((id) => `id="${id}"`).join(' || '),
+        fields: 'warehouse',
+      });
+      warehouseIds.push(...records.map((r) => r.warehouse).filter(Boolean));
+    }
+
     await Promise.all(params.ids.map((id) => pb.collection(resource).delete(id.toString())));
+
+    // Автоматически обновляем счетчики товаров на складах
+    if (resource === 'products' && warehouseIds.length > 0) {
+      await updateMultipleWarehousesCount(warehouseIds);
+    }
 
     return {
       data: params.ids,

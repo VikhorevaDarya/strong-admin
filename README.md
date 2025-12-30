@@ -82,6 +82,7 @@ strong-admin/
 - [UPDATES.md](UPDATES.md) - 🆕 История обновлений и новые функции
 - [RESPONSIVE_DESIGN.md](RESPONSIVE_DESIGN.md) - 📱 Адаптивная верстка и мобильная версия
 - [EXCEL_IMPORT_GUIDE.md](EXCEL_IMPORT_GUIDE.md) - 📊 Импорт товаров из Excel
+- [VERCEL_DEPLOY_GUIDE.md](VERCEL_DEPLOY_GUIDE.md) - 🚀 Деплой на Vercel
 - [client/README.md](client/README.md) - Документация клиентской части
 
 ---

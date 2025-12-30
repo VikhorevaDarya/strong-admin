@@ -3,6 +3,7 @@ import {
   List,
   Datagrid,
   TextField,
+  NumberField,
   EditButton,
   DeleteButton,
   Filter,
@@ -42,7 +43,7 @@ export const WarehouseList: React.FC = () => {
           <TextField source="id" label="ID" />
           <TextField source="name" label="Название склада" />
           <TextField source="address" label="Адрес" />
-          <TextField source="products_count" label="Количество товаров" />
+          <NumberField source="products_count" label="Количество товаров" emptyText="0" />
           <EditButton label="Редактировать" />
           <DeleteButton label="Удалить" />
         </Datagrid>
